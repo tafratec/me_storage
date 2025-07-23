@@ -1,25 +1,38 @@
-#Header set Access-Control-Allow-Origin "*"
-Header set Access-Control-Allow-Origin "https://opr.mylinealigner.com"
+ # Disable directory listing
+Options -Indexes
 
-# Check if mod_rewrite is enabled
-<IfModule mod_rewrite.c>
-    # Block all file upload requests except from specific IPs
-    <FilesMatch "\.(avifs?|bmp|cur|gif|ico|jpe?g|jxl|a?png|svgz?|webp|stl|STL|png|pdf|mp4|JPG|m3d|jpg)$">
-        <Limit PUT POST>
-            Order Deny,Allow
-            Deny from all
-            Allow from 194.135.93.189
-        </Limit>
-    </FilesMatch>
+# Pass Authorization header to PHP
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 
-    # Allow file downloads for all users
-    <FilesMatch "\.(avifs?|bmp|cur|gif|ico|jpe?g|jxl|a?png|svgz?|webp|stl|STL|png|pdf|mp4|JPG|m3d|jpg)$">
-        Order Allow,Deny
-        Allow from all
-    </FilesMatch>
-</IfModule>
 
-# Fallback message if mod_rewrite is not available
-<IfModule !mod_rewrite.c>
-    ErrorDocument 500 "mod_rewrite is required for these rules to work."
-</IfModule>
+# Deny access to sensitive files
+<Files "config.php">
+    Deny from all
+</Files>
+
+<Files "db.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "auth.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Restrict access to PHP files only (optional)
+#<FilesMatch "\.php$">
+#    Require all granted
+#</FilesMatch>
+
+# Block access to everything else (like .env, backups, etc.)
+<FilesMatch "\.(env|ini|log|sh|bak|sql|json|yml|yaml)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect the .htaccess file itself
+<Files ".htaccess">
+    Order Allow,Deny
+    Deny from all
+</Files>
