@@ -1,0 +1,25 @@
+#Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Origin "https://opr.mylinealigner.com"
+
+# Check if mod_rewrite is enabled
+<IfModule mod_rewrite.c>
+    # Block all file upload requests except from specific IPs
+    <FilesMatch "\.(avifs?|bmp|cur|gif|ico|jpe?g|jxl|a?png|svgz?|webp|stl|STL|png|pdf|mp4|JPG|m3d|jpg)$">
+        <Limit PUT POST>
+            Order Deny,Allow
+            Deny from all
+            Allow from 194.135.93.189
+        </Limit>
+    </FilesMatch>
+
+    # Allow file downloads for all users
+    <FilesMatch "\.(avifs?|bmp|cur|gif|ico|jpe?g|jxl|a?png|svgz?|webp|stl|STL|png|pdf|mp4|JPG|m3d|jpg)$">
+        Order Allow,Deny
+        Allow from all
+    </FilesMatch>
+</IfModule>
+
+# Fallback message if mod_rewrite is not available
+<IfModule !mod_rewrite.c>
+    ErrorDocument 500 "mod_rewrite is required for these rules to work."
+</IfModule>
