@@ -1,4 +1,5 @@
 <?php
+/*
 header('Content-Type: application/json');
 require_once 'auth.php';
 require_once 'db.php';
@@ -33,4 +34,5 @@ try {
     http_response_code(500);
     echo json_encode(["error" => "Internal server error"]);
 }
+    */
 ?>

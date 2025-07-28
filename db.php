@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-
+/*
 function getDbConnection() {
     try {
         $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME;
@@ -11,4 +11,5 @@ function getDbConnection() {
         die(json_encode(["error" => "Database connection failed"]));
     }
 }
+    */
 ?>
