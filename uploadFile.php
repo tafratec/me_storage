@@ -25,7 +25,7 @@ switch ($_POST['calling_method']) {
         }
 
         $file = $_FILES['file'];
-        $uploadDir = 'uploads/';
+        $uploadDir = 'payemnts/'.$_POST['cust_id'];
         $uploadFile = $uploadDir . basename($file['name']);
 
         if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
