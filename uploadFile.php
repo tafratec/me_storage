@@ -8,6 +8,9 @@ switch ($_POST['calling_method']) {
 		case 'payment_doc':
 			echo uploadPayemntPic();
 			break;
+        Case 'uploadExportDoc' :
+            echo uploadExportDoc();
+            break;
 		case 'file_remove':
 			echo deleteFile();
 			break;
@@ -26,6 +29,24 @@ switch ($_POST['calling_method']) {
 
         $file = $_FILES['file'];
         $uploadDir = 'payemnts/'.$_POST['cust_id'];
+        $uploadFile = $uploadDir . basename($file['name']);
+
+        if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
+            http_response_code(500);
+            return json_encode(["error" => "Failed to move uploaded file"]);
+        }
+
+        return json_encode(["message" => "File uploaded successfully", "file_path" => $uploadFile]);
+    }
+
+        function uploadExportDoc() {
+        if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            http_response_code(400);
+            return json_encode(["error" => "File upload error"]);
+        }
+
+        $file = $_FILES['file'];
+        $uploadDir = 'exportOrders/';
         $uploadFile = $uploadDir . basename($file['name']);
 
         if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
