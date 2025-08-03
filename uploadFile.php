@@ -74,15 +74,16 @@ switch ($_POST['calling_method']) {
     }
 
     function downloadFile() {
-        $filePath = $_GET['file_path'] ?? null;
+    $filePath = $_POST['file_path'] ?? null;
 
-        if (!$filePath || !file_exists($filePath)) {
-            http_response_code(404);
-            return json_encode(["error" => "File not found"]);
-        }
-
-        header('Content-Disposition: attachment; filename="' . basename($filePath) . '"');
-        header('Content-Type: application/octet-stream');
-        readfile($filePath);
+    if (!$filePath || !file_exists($filePath)) {
+        http_response_code(404);
+        echo json_encode(["error" => "File not found"]);
         exit;
     }
+
+    // ✅ رجّع JSON مباشرة
+    header('Content-Type: application/json');
+    echo file_get_contents($filePath);
+    exit;
+}
