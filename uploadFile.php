@@ -36,7 +36,7 @@ switch ($_POST['calling_method']) {
             return json_encode(["error" => "Failed to move uploaded file"]);
         }
 
-        return json_encode(["message" => "File uploaded successfully", "file_path" => $uploadFile]);
+        return json_encode($uploadFile);
     }
 
         function uploadExportDoc() {
