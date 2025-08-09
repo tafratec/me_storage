@@ -20,6 +20,7 @@ switch ($_POST['calling_method']) {
     default:
         http_response_code(400);
 }
+
 function uploadPayemntPic()
 {
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
@@ -29,29 +30,28 @@ function uploadPayemntPic()
 
     $file = $_FILES['file'];
 
-    // المسار الأساسي
-    $uploadDir = 'payments/' . $_POST['cust_id'] . '/';
+    // المسار المطلق لمجلد الموقع
+    $rootPath = __DIR__;
+    $uploadDir = $rootPath . '/payments/' . $_POST['cust_id'];
 
-    // إنشاء المجلد إذا غير موجود
+    // إنشاء المجلد payments/{cust_id} لو مش موجود
     if (!is_dir($uploadDir)) {
         if (!mkdir($uploadDir, 0777, true)) {
             http_response_code(500);
-            return json_encode(["error" => "Failed to create directory"]);
+            return json_encode(["error" => "Failed to create folder: $uploadDir"]);
         }
     }
 
-    // بناء المسار الكامل للملف
-    $uploadFile = $uploadDir . basename($file['name']);
+    $uploadFile = $uploadDir . '/' . basename($file['name']);
 
-    // رفع الملف
     if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
         http_response_code(500);
         return json_encode(["error" => "Failed to move uploaded file"]);
     }
 
-    return json_encode(["success" => true, "path" => $uploadFile]);
+    // URL كامل للملف
+    return 5;
 }
-
 
 function uploadExportDoc()
 {
