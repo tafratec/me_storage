@@ -155,16 +155,21 @@ function downloadImage()
     exit;
 }
 
-
 function AccountStatement()
 {
+    $uploadDir = 'AccountStatement/';
+
+    // إنشاء الفولدر لو مش موجود
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);
         return json_encode(["error" => "File upload error"]);
     }
 
     $file = $_FILES['file'];
-    $uploadDir = 'AccountStatement/';
     $uploadFile = $uploadDir . basename($file['name']);
 
     if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
@@ -172,5 +177,10 @@ function AccountStatement()
         return json_encode(["error" => "Failed to move uploaded file"]);
     }
 
-    return json_encode(["message" => "File uploaded successfully", "file_path" => $uploadFile]);
+    return json_encode([
+        "message" => "File uploaded successfully",
+        "file_path" => $uploadFile
+    ]);
 }
+
+
