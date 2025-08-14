@@ -157,30 +157,44 @@ function downloadImage()
 
 function AccountStatement()
 {
+    // عرض أي خطأ على الشاشة
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+
+    header('Content-Type: application/json; charset=utf-8');
+
     $uploadDir = 'AccountStatement/';
 
-    // إنشاء الفولدر لو مش موجود
+    // إنشاء الفولدر لو مش موجود مع صلاحيات الكتابة
     if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
+        if (!mkdir($uploadDir, 0777, true)) {
+            echo json_encode(["error" => "❌ فشل إنشاء مجلد الحفظ"]);
+            exit;
+        }
     }
 
+    // التحقق من الملف المرفوع
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-        http_response_code(400);
-        return json_encode(["error" => "File upload error"]);
+        echo json_encode(["error" => "❌ خطأ في رفع الملف"]);
+        exit;
     }
 
     $file = $_FILES['file'];
     $uploadFile = $uploadDir . basename($file['name']);
 
+    // نقل الملف من مجلد مؤقت إلى المجلد النهائي
     if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
-        http_response_code(500);
-        return json_encode(["error" => "Failed to move uploaded file"]);
+        echo json_encode(["error" => "❌ فشل في حفظ الملف في المجلد"]);
+        exit;
     }
 
-    return json_encode([
-        "message" => "File uploaded successfully",
+    // استجابة النجاح
+    echo json_encode([
+        "message" => "✅ تم رفع الملف بنجاح",
         "file_path" => $uploadFile
     ]);
+    exit;
 }
+
 
 
