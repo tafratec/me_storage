@@ -21,7 +21,7 @@ switch ($_POST['calling_method']) {
         return downloadImage();
         break;
     case 'upload_account':
-        return uploadAccount();
+        return AccountStatement();
         break;
     default:
         http_response_code(400);
@@ -156,7 +156,7 @@ function downloadImage()
 }
 
 
-function uploadAccount()
+function AccountStatement()
 {
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);
