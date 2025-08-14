@@ -17,6 +17,12 @@ switch ($_POST['calling_method']) {
     case 'bring_file':
         return downloadFile();
         break;
+    case 'bring_Image':
+        return downloadImage();
+        break;
+    case 'upload_account':
+        return uploadAccount();
+        break;
     default:
         http_response_code(400);
 }
@@ -103,4 +109,68 @@ function downloadFile()
     header('Content-Type: application/json');
     echo file_get_contents($filePath);
     exit;
+}
+// ====== للسيرفر اللي فيه الصور ======
+function getMimeType($filePath)
+{
+    $ext = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $map = [
+        'jpg'  => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'png'  => 'image/png',
+        'gif'  => 'image/gif',
+        'webp' => 'image/webp',
+        'bmp'  => 'image/bmp',
+        'pdf'  => 'application/pdf',
+    ];
+    return $map[$ext] ?? 'application/octet-stream';
+}
+
+function downloadImage()
+{
+    $filePath = $_POST['filePath'] ?? null;
+
+    if (!$filePath) {
+        http_response_code(404);
+        echo "❌ No file path provided";
+        exit;
+    }
+
+    // إجبار المسار يكون داخل المسار المسموح
+    if (strpos($filePath, '/www/wwwroot/tf.middleegypt.com/') !== 0) {
+        $filePath = '/www/wwwroot/tf.middleegypt.com' . $filePath;
+    }
+
+    if (!file_exists($filePath)) {
+        http_response_code(404);
+        echo "❌ Image not found: {$filePath}";
+        exit;
+    }
+
+    // نجيب النوع يدويًا بدل mime_content_type()
+    $mimeType = getMimeType($filePath);
+
+    header("Content-Type: {$mimeType}");
+    readfile($filePath);
+    exit;
+}
+
+
+function uploadAccount()
+{
+    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        return json_encode(["error" => "File upload error"]);
+    }
+
+    $file = $_FILES['file'];
+    $uploadDir = 'AccountStatement/';
+    $uploadFile = $uploadDir . basename($file['name']);
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadFile)) {
+        http_response_code(500);
+        return json_encode(["error" => "Failed to move uploaded file"]);
+    }
+
+    return json_encode(["message" => "File uploaded successfully", "file_path" => $uploadFile]);
 }
