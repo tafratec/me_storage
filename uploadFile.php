@@ -6,7 +6,7 @@ authenticate();
 
 switch ($_POST['calling_method']) {
     case 'payment_doc':
-        echo uploadPayemntPic();
+        echo uploadPayemntJson();
         break;
     case 'uploadExportDoc':
         echo uploadExportDoc();
@@ -21,7 +21,7 @@ switch ($_POST['calling_method']) {
         http_response_code(400);
 }
 
-function uploadPayemntPic()
+function uploadPayemntJson()
 {
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
         http_response_code(400);
