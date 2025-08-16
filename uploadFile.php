@@ -138,7 +138,7 @@ function downloadImage()
 
     // إجبار المسار يكون داخل المسار المسموح
     if (strpos($filePath, '/www/wwwroot/tf.middleegypt.com/') !== 0) {
-        $filePath = '/www/wwwroot/tf.middleegypt.com' . $filePath;
+        $filePath = '/www/wwwroot/'. $filePath;
     }
 
     if (!file_exists($filePath)) {
